@@ -35,7 +35,6 @@ int menu =0;
 
 void setup()
 {
-
   lcd.init();
   lcd.backlight();
   lcd.clear();
@@ -53,10 +52,9 @@ void setup()
  
 void loop()
 {
+    MenuSurveil();
 
-  MenuSurveil();
-
-  switch (menu) 
+    switch (menu) 
     {
         case 0:
         //do something when var equals 0
@@ -72,18 +70,6 @@ void loop()
             DisplaySetMinute();
             //MenuSurveil();
             break;
-        case 3:
-            DisplaySetYear();
-            //MenuSurveil();
-            break;
-        case 4:
-            DisplaySetMonth();
-            //MenuSurveil();
-            break;
-        case 5:
-            DisplaySetDay();
-            //MenuSurveil();
-            break;
 
         default:
             menu=0;
@@ -93,67 +79,60 @@ void loop()
 
 void MenuSurveil()
 {
-  digitalWrite(ref, LOW);
-  digitalWrite(P1,HIGH);
-  Serial.print(ref);
-  Serial.print(P1);
+    digitalWrite(ref, LOW);
+    digitalWrite(P1,HIGH);
+    Serial.print(ref);
+    Serial.print(P1);
+
     if(digitalRead(P1)== LOW)
-            {
-                delay(100);
-                if (digitalRead(P1)== LOW)
-                {
-                  Serial.print(P1);
-                menu++;
-                }
-                digitalWrite(ref, HIGH);
-            }
+    {
+        delay(100);
+        if (digitalRead(P1)== LOW)
+        {
+            Serial.print(P1);
+            menu++;
+        }
+        digitalWrite(ref, HIGH);
+    }
 }
 
 void buttonSurveil(int Var,int param,int maxi,int mini,int math)
 {
-  digitalWrite(ref, LOW);
-  digitalWrite(var,HIGH);
+    digitalWrite(ref, LOW);
+    digitalWrite(var,HIGH);
+
     if(digitalRead(Var)== LOW)
     {
-      if (math == "+")
+        if (math == "+")
         {
-          if (param == maxi)
+            if (param == maxi)
             {
-              param = mini;
+                param = mini;
             }
-          else
+            else
             {
-              param = param + 1;
+                param = param + 1;
             }
         }
-      else if (math == "-")
+        else if (math == "-")
         {
-          if (param == mini)
+            if (param == mini)
             {
-              param = maxi;
+                param = maxi;
             }
-          else
+            else
             {
-              param = param - 1;
+                param = param - 1;
             }
         }
-      digitalWrite(ref, HIGH);
+        digitalWrite(ref, HIGH);
+        digitalWrite(Var, HIGH);
     }
 }
-
-
-
-
 
 void DisplayDateTime()
 {
     lcd.clear();
-// We show the current date and time
-      lcd.setCursor(0,0);
-    char date[10];
-    sprintf(date, "%02i/%02i/%04i",day,month,year);
-    lcd.print(date);
-
     lcd.setCursor(6,1);
     char time[17];
     sprintf(time, "  %02i:%02i:%02i", hours, minutes, seconds);
@@ -163,186 +142,31 @@ void DisplayDateTime()
 void DisplaySetHour()
 {
 // Setting the hour
-  lcd.clear();
-  digitalWrite(ref, LOW);
-  digitalWrite(P2,HIGH);
-  igitalWrite(P3,HIGH);
+    lcd.clear();
+  
+    buttonSurveil(P2, hours, 23, 0, "+");
+    buttonSurveil(P3, hours, 23, 0, "-");
 
-  if(digitalRead(P2)==LOW)
-  {
-    if (hours==23)
-    {
-      hours=0;
-    }
-    else
-    {
-      hours=hours+1;
-    }
-  }
-   if(digitalRead(P3)==LOW)
-  {
-    if (hours==0)
-    {
-      hours=23;
-    }
-    else
-    {
-      hours=hours-1;
-    }
-  }
-  lcd.setCursor(0,0);
-  lcd.print("Set hours:");
-  lcd.setCursor(0,1);
-  lcd.print(hours,DEC);
-  delay(200);
+    lcd.setCursor(0,0);
+    lcd.print("Set hours:");
+    lcd.setCursor(0,1);
+    lcd.print(hours,DEC);
+    delay(200);
 }
 
 void DisplaySetMinute()
 {
 // Setting the minutes
-  lcd.clear();
-  digitalWrite(ref, LOW);
-  digitalWrite(P2,HIGH);
-  igitalWrite(P3,HIGH);
+    lcd.clear();
+  
+    buttonSurveil(P2, minutes, 59, 0, "+");
+    buttonSurveil(P3, minutes, 59, 0, "-");
 
-  if(digitalRead(P2)==LOW)
-  {
-    if (minutes==59)
-    {
-      minutes=0;
-    }
-    else
-    {
-      minutes=minutes+1;
-    }
-    seconds=0;
-  }
-   if(digitalRead(P3)==LOW)
-  {
-    if (minutes==0)
-    {
-      minutes=59;
-    }
-    else
-    {
-      minutes=minutes-1;
-    }
-    seconds=0;
-  }
-  lcd.setCursor(0,0);
-  lcd.print("Set minute:");
-  lcd.setCursor(0,1);
-  lcd.print(minutes,DEC);
-  delay(200);
-}
-
-void DisplaySetYear()
-{
-// setting the year
-  lcd.clear();
-  digitalWrite(ref, LOW);
-  digitalWrite(P2,HIGH);
-  igitalWrite(P3,HIGH);
-
-  if(digitalRead(P2)==LOW)
-  {    
-    year=year+1;
-  }
-   if(digitalRead(P3)==LOW)
-  {
-    year=year-1;
-  }
-  lcd.setCursor(0,0);
-  lcd.print("Set Year:");
-  lcd.setCursor(0,1);
-  lcd.print(year,DEC);
-  delay(200);
-}
-
-void DisplaySetMonth()
-{
-// Setting the month
-  lcd.clear();
-  digitalWrite(ref, LOW);
-  digitalWrite(P2,HIGH);
-  igitalWrite(P3,HIGH);
-
-  if(digitalRead(P2)==LOW)
-  {
-    if (month==12)
-    {
-      month=1;
-    }
-    else
-    {
-      month=month+1;
-    }
-  }
-   if(digitalRead(P3)==LOW)
-  {
-    if (month==1)
-    {
-      month=12;
-    }
-    else
-    {
-      month=month-1;
-    }
-  }
-  lcd.setCursor(0,0);
-  lcd.print("Set Month:");
-  lcd.setCursor(0,1);
-  lcd.print(month,DEC);
-  delay(200);
-}
-
-void DisplaySetDay()
-{
-// Setting the day
-  lcd.clear();
-  digitalWrite(ref, LOW);
-  digitalWrite(P2,HIGH);
-  igitalWrite(P3,HIGH);
-
-  if(digitalRead(P2)==LOW)
-  {
-    if (day==31)
-    {
-      day=1;
-    }
-    else
-    {
-      day=day+1;
-    }
-  }
-   if(digitalRead(P3)==LOW)
-  {
-    if (day==1)
-    {
-      day=31;
-    }
-    else
-    {
-      day=day-1;
-    }
-  }
-  lcd.setCursor(0,0);
-  lcd.print("Set Day:");
-  lcd.setCursor(0,1);
-  lcd.print(day,DEC);
-  delay(200);
-}
-
-void StoreAgg()
-{
-// Variable saving
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("SAVING IN");
-  lcd.setCursor(0,1);
-  lcd.print("PROGRESS");
- // RTC.adjust(DateTime(yearupg,monthupg,dayupg,hourupg,minupg,0));
-  delay(200);
+    lcd.setCursor(0,0);
+    lcd.print("Set minute:");
+    lcd.setCursor(0,1);
+    lcd.print(minutes,DEC);
+    delay(200);
 }
 
 void incTime() {
@@ -353,18 +177,16 @@ void incTime() {
     if (seconds >= 60) {
         
         seconds = seconds - 60;
-
         minutes++;
 
         if (minutes == 60) {
         
         minutes = 0;
-
         hours++;
 
-        if (hours == 24) {
+        if (hours == 24) 
+        {
             hours = 0;
-
             day++;
         }
     }
